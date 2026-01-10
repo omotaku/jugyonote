@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+{% block title %}ダッシュボード - ノートサービス{% endblock %}
+{% block content %}
+  <h2>あなたのノート</h2>
+  <form method="get" class="search-form">
+    <input type="text" name="q" placeholder="キーワード検索" value="{{ q if q else '' }}">
+    <select name="period">
+      <option value="">全ての期</option>
+      <option value="古代" {% if period=='古代' %}selected{% endif %}>古代</option>
+      <option value="中世" {% if period=='中世' %}selected{% endif %}>中世</option>
+      <option value="近世" {% if period=='近世' %}selected{% endif %}>近世</option>
+      <option value="近代" {% if period=='近代' %}selected{% endif %}>近代</option>
+      <option value="現代" {% if period=='現代' %}selected{% endif %}>現代</option>
+    </select>
+    <input type="text" name="region" placeholder="地域" value="{{ region if region else '' }}">
+    <input type="text" name="tags" placeholder="タグ" value="{{ tags if tags else '' }}">
+    <button class="btn" type="submit">検索</button>
+    <a class="btn secondary" href="/dashboard">クリア</a>
+  </form>
+  <p><a class="btn" href="/notes/new">新しいノートを作成</a></p>
+  <p><a class="btn" href="/notes/import">Markdown からインポート</a></p>
+  <p><a class="btn" href="/notes/export_all">すべてをCSVでエクスポート</a></p>
+  <p><a class="btn" href="/shares">共有リンク管理</a></p>
+  {% if notes|length == 0 %}
+    <p>まだノートがありません。</p>
+  {% else %}
+    <div class="notes-grid">
+    {% for n in notes %}
+      <div class="card note-card">
+        <strong>{{ n.title or '（無題）' }}</strong>
+        <div class="note-meta">作成: {{ n.created_at }}{% if n.updated_at %} / 更新: {{ n.updated_at }}{% endif %}</div>
+        <div class="note-meta">期: {{ n.period or '未設定' }} / 地域: {{ n.region or '未設定' }}</div>
+        {% if n.tags %}<div class="note-tags">タグ: {{ n.tags }}</div>{% endif %}
+        <div class="note-actions">
+          <a class="btn secondary" href="/notes/{{ n.id }}/edit">編集</a>
+          <a class="btn" href="/notes/{{ n.id }}/export">エクスポート</a>
+          <form method="post" action="/notes/{{ n.id }}/share" style="display:inline">
+            <button class="btn" type="submit">共有リンク生成</button>
+          </form>
+          {% if public_map and n.id in public_map %}
+            <a class="btn" href="/s/{{ public_map[n.id] }}" target="_blank">共有ページへ</a>
+          {% endif %}
+          <form method="post" action="/notes/{{ n.id }}/delete" style="display:inline">
+            <button class="btn" type="submit" onclick="return confirm('削除しますか？')">削除</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+  <div class="pagination">
+    {% if total_pages and total_pages > 1 %}
+      {% for p in range(1, total_pages+1) %}
+        {% if p == page %}
+          <strong>{{ p }}</strong>
+        {% else %}
+          <a href="?q={{ q }}&period={{ period }}&region={{ region }}&tags={{ tags }}&page={{ p }}">{{ p }}</a>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block title %}公開ノート - {{ note.title or '（無題）' }}{% endblock %}
+{% block content %}
+  <h2>{{ note.title or '（無題）' }}</h2>
+  <div class="card">
+    <div class="note-meta">期: {{ note.period or '未設定' }} / 地域: {{ note.region or '未設定' }}</div>
+    {% if note.tags %}<div class="note-tags">タグ: {{ note.tags }}</div>{% endif %}
+    <div class="public-content">{{ note.content|safe }}</div>
+    <div class="note-meta">作成: {{ note.created_at }}{% if note.updated_at %} / 更新: {{ note.updated_at }}{% endif %}</div>
+  </div>
+{% endblock %}

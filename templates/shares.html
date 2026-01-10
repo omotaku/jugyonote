@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+{% block title %}共有リンク管理{% endblock %}
+{% block content %}
+  <h2>共有リンク管理</h2>
+  <p><a class="btn" href="/dashboard">戻る</a></p>
+  {% if shares|length == 0 %}
+    <p>共有リンクはありません。</p>
+  {% else %}
+    <table>
+      <thead><tr><th>ID</th><th>ノート</th><th>リンク</th><th>期限</th><th>状態</th><th>操作</th></tr></thead>
+      <tbody>
+      {% for s in shares %}
+        <tr>
+          <td>{{ s.id }}</td>
+          <td>{{ s.title or '（無題）' }}</td>
+          <td><a href="/s/{{ s.token }}" target="_blank">/s/{{ s.token }}</a></td>
+          <td>{{ s.expires_at or '無し' }}</td>
+          <td>{% if s.revoked %}取り消し済{% else %}公開中{% endif %}</td>
+          <td>
+            {% if not s.revoked %}
+            <form method="post" action="/shares/{{ s.id }}/revoke" style="display:inline">
+              <button class="btn" type="submit" onclick="return confirm('取り消しますか？')">取り消す</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock %}

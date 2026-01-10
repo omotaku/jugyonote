@@ -1,0 +1,11 @@
+[Unit]
+Description=Cleanup expired public share links for tst app
+After=network.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/home/omoto/デスクトップ/tst
+Environment="PATH=/home/omoto/デスクトップ/tst/venv/bin"
+ExecStart=/home/omoto/デスクトップ/tst/venv/bin/python3 /home/omoto/デスクトップ/tst/scripts/cleanup_expired_shares.py /home/omoto/デスクトップ/tst/notes.db

@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+{% block title %}トップ - ノートサービス{% endblock %}
+{% block content %}
+  <h1>授業ノートサービスへようこそ</h1>
+  <p>このサービスは授業で生徒がノートを取り、保存、編集できるシンプルなプロトタイプです。</p>
+  {% if not current_user.is_authenticated %}
+  <p><a href="/register">登録</a> または <a href="/login">ログイン</a> して始めてください。</p>
+  {% else %}
+  <p><a href="/dashboard">ダッシュボードへ</a></p>
+  {% endif %}
+{% endblock %}

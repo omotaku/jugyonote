@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% block title %}{% if note %}編集{% else %}新規作成{% endif %} - ノート{% endblock %}
+{% block content %}
+  <h2>{% if note %}ノートを編集{% else %}新しいノート{% endif %}</h2>
+  <div class="card form-card">
+  <form method="post">
+    <label>タイトル:<br><input name="title" value="{{ note.title if note else '' }}"></label><br>
+    {% if not note %}
+    <label>テンプレート選択:<br>
+      <select id="template-select">
+        <option value="">--雛形を選択--</option>
+        {% for k in templates.keys() %}
+        <option value="{{ k }}">{{ k }}</option>
+        {% endfor %}
+      </select>
+    </label><br>
+    {% endif %}
+    <label>期（period）:<br>
+      <select name="period">
+        <option value="">--選択--</option>
+        <option value="古代" {% if note and note.period=='古代' %}selected{% endif %}>古代</option>
+        <option value="中世" {% if note and note.period=='中世' %}selected{% endif %}>中世</option>
+        <option value="近世" {% if note and note.period=='近世' %}selected{% endif %}>近世</option>
+        <option value="近代" {% if note and note.period=='近代' %}selected{% endif %}>近代</option>
+        <option value="現代" {% if note and note.period=='現代' %}selected{% endif %}>現代</option>
+      </select>
+    </label>
+    <label>地域（region）:<br><input name="region" value="{{ note.region if note else '' }}"></label><br>
+    <label>タグ（カンマ区切り）:<br><input name="tags" value="{{ note.tags if note else '' }}"></label><br>
+    <label>内容:<br><textarea id="note-content" name="content" rows="12">{{ note.content if note else default_content }}</textarea></label>
+    <div id="preview-area"><h3>プレビュー</h3><div id="preview-content" class="preview-box"></div></div>
+    <div class="form-actions">
+      <button class="btn" type="submit">保存</button>
+      <a class="btn secondary" href="/dashboard">戻る</a>
+      {% if note %}
+      <a class="btn" href="/notes/{{ note.id }}/export">エクスポート</a>
+      {% endif %}
+    </div>
+  </form>
+  </div>
+  {% if not note %}
+  <script>
+    const NOTE_TEMPLATES = {{ templates|tojson }};
+    document.getElementById('template-select').addEventListener('change', function(e){
+      const val = e.target.value;
+      if(val && NOTE_TEMPLATES[val]){
+        document.getElementById('note-content').value = NOTE_TEMPLATES[val];
+        // trigger input event to update preview/autosave timer
+        document.getElementById('note-content').dispatchEvent(new Event('input'));
+      }
+    });
+  </script>
+  {% endif %}
+{% endblock %}

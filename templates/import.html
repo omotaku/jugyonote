@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block title %}ノートのインポート{% endblock %}
+{% block content %}
+  <h2>ノートのインポート (Markdown)</h2>
+  <div class="card form-card">
+  <form method="post" enctype="multipart/form-data">
+    <label>Markdownファイル:<br><input type="file" name="file" accept=".md,text/markdown"></label>
+    <div class="form-actions">
+      <button class="btn" type="submit">インポート</button>
+      <a class="btn secondary" href="/dashboard">戻る</a>
+    </div>
+  </form>
+  </div>
+{% endblock %}
